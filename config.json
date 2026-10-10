@@ -1,0 +1,15 @@
+{
+  "server_ip": "10.0.0.4",
+  "normal_port": 5000,
+  "critical_port": 5001,
+  "interval_sec": 2,
+  "cpu_critical": 85,
+  "mem_critical": 90,
+  "heartbeat_timeout_sec": 6,
+  "nodes": {
+    "agent1": "10.0.0.1",
+    "agent2": "10.0.0.2",
+    "agent3": "10.0.0.3",
+    "server": "10.0.0.4"
+  }
+}
