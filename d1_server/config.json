@@ -1,0 +1,13 @@
+{
+  "server": {"host": "0.0.0.0", "port": 5005, "workers": 8, "buffer_size": 4096},
+  "thresholds": {
+    "cpu_warning": 75.0,
+    "cpu_critical": 90.0,
+    "memory_warning": 75.0,
+    "memory_critical": 90.0
+  },
+  "heartbeat": {"timeout_sec": 10.0, "check_interval_sec": 1.0},
+  "alerts": {"cooldown_sec": 10.0, "log_file": "alerts.log"},
+  "dashboard": {"enabled": true, "refresh_sec": 1.0, "alert_history": 6},
+  "controller": {"enabled": false, "url": "http://127.0.0.1:8080/alert", "timeout_sec": 2.0}
+}
