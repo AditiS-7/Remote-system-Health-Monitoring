@@ -5,13 +5,13 @@ D1 - Central Monitoring Server (Person 2)
 Receives periodic JSON health reports from UDP agents, tracks the latest
 status of every node, raises alerts for CPU > 85% or RAM > 90%,
 detects missing heartbeats after 6 seconds, and displays a live terminal dashboard.
-"""
+
 
 Usage:
     python3 monitor_server.py                    # uses config.json
     python3 monitor_server.py -c config.json
     python3 monitor_server.py --no-dashboard     # log-only mode (useful in tests)
-
+"""
 import argparse
 import json
 import logging
