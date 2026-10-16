@@ -1,13 +1,15 @@
 {
-  "server": {"host": "0.0.0.0", "port": 5005, "workers": 8, "buffer_size": 4096},
-  "thresholds": {
-    "cpu_warning": 75.0,
-    "cpu_critical": 90.0,
-    "memory_warning": 75.0,
-    "memory_critical": 90.0
-  },
-  "heartbeat": {"timeout_sec": 10.0, "check_interval_sec": 1.0},
-  "alerts": {"cooldown_sec": 10.0, "log_file": "alerts.log"},
-  "dashboard": {"enabled": true, "refresh_sec": 1.0, "alert_history": 6},
-  "controller": {"enabled": false, "url": "http://127.0.0.1:8080/alert", "timeout_sec": 2.0}
+  "server_ip": "10.0.0.4",
+  "normal_port": 5000,
+  "critical_port": 5001,
+  "interval_sec": 2,
+  "cpu_critical": 85,
+  "mem_critical": 90,
+  "heartbeat_timeout_sec": 6,
+  "nodes": {
+    "agent1": "10.0.0.1",
+    "agent2": "10.0.0.2",
+    "agent3": "10.0.0.3",
+    "server": "10.0.0.4"
+  }
 }
