@@ -1,0 +1,18 @@
+_uuid               : 7ab4f3c4-800b-4d06-8c99-04012a661542
+connection_mode     : []
+controller_burst_limit: []
+controller_queue_size: []
+controller_rate_limit: []
+enable_async_messages: []
+external_ids        : {}
+inactivity_probe    : []
+is_connected        : true
+local_gateway       : []
+local_ip            : []
+local_netmask       : []
+max_backoff         : 1000
+other_config        : {}
+role                : other
+status              : {sec_since_connect="269", state=ACTIVE}
+target              : "tcp:127.0.0.1:6653"
+type                : []

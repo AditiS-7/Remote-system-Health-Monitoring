@@ -1,0 +1,20 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "ports": [5000, 5001]
+  },
+  "thresholds": {
+    "cpu_critical": 85,
+    "memory_critical": 90
+  },
+  "heartbeat": {
+    "timeout_sec": 6,
+    "check_interval_sec": 1
+  },
+  "alerts": {
+    "log_file": "/tmp/cn-integration/alerts.log"
+  },
+  "controller": {
+    "enabled": false
+  }
+}
