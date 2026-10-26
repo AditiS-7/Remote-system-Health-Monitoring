@@ -1,0 +1,16 @@
+OFPST_FLOW reply (OF1.3) (xid=0x2):
+ cookie=0x0, duration=919.793s, table=0, n_packets=7, n_bytes=518, priority=1,in_port=2,dl_src=00:00:00:00:00:02,dl_dst=00:00:00:00:00:01 actions=output:1
+ cookie=0x0, duration=919.790s, table=0, n_packets=6, n_bytes=420, priority=1,in_port=1,dl_src=00:00:00:00:00:01,dl_dst=00:00:00:00:00:02 actions=output:2
+ cookie=0x0, duration=919.774s, table=0, n_packets=7, n_bytes=518, priority=1,in_port=3,dl_src=00:00:00:00:00:03,dl_dst=00:00:00:00:00:01 actions=output:1
+ cookie=0x0, duration=919.771s, table=0, n_packets=6, n_bytes=420, priority=1,in_port=1,dl_src=00:00:00:00:00:01,dl_dst=00:00:00:00:00:03 actions=output:3
+ cookie=0x0, duration=919.754s, table=0, n_packets=7, n_bytes=518, priority=1,in_port=4,dl_src=00:00:00:00:00:04,dl_dst=00:00:00:00:00:01 actions=output:1
+ cookie=0x0, duration=919.749s, table=0, n_packets=6, n_bytes=420, priority=1,in_port=1,dl_src=00:00:00:00:00:01,dl_dst=00:00:00:00:00:04 actions=output:4
+ cookie=0x0, duration=919.721s, table=0, n_packets=7, n_bytes=518, priority=1,in_port=3,dl_src=00:00:00:00:00:03,dl_dst=00:00:00:00:00:02 actions=output:2
+ cookie=0x0, duration=919.718s, table=0, n_packets=6, n_bytes=420, priority=1,in_port=2,dl_src=00:00:00:00:00:02,dl_dst=00:00:00:00:00:03 actions=output:3
+ cookie=0x0, duration=919.701s, table=0, n_packets=10, n_bytes=644, priority=1,in_port=4,dl_src=00:00:00:00:00:04,dl_dst=00:00:00:00:00:02 actions=output:2
+ cookie=0x0, duration=919.699s, table=0, n_packets=30, n_bytes=4657, priority=1,in_port=2,dl_src=00:00:00:00:00:02,dl_dst=00:00:00:00:00:04 actions=output:4
+ cookie=0x0, duration=919.673s, table=0, n_packets=7, n_bytes=518, priority=1,in_port=4,dl_src=00:00:00:00:00:04,dl_dst=00:00:00:00:00:03 actions=output:3
+ cookie=0x0, duration=919.669s, table=0, n_packets=6, n_bytes=420, priority=1,in_port=3,dl_src=00:00:00:00:00:03,dl_dst=00:00:00:00:00:04 actions=output:4
+ cookie=0x0, duration=911.856s, table=0, n_packets=54, n_bytes=4820, priority=1,in_port=5,dl_src=2a:7d:2b:26:f1:cf,dl_dst=00:00:00:00:00:04 actions=output:4
+ cookie=0x0, duration=911.848s, table=0, n_packets=63, n_bytes=5769, priority=1,in_port=4,dl_src=00:00:00:00:00:04,dl_dst=2a:7d:2b:26:f1:cf actions=output:5
+ cookie=0x0, duration=458.274s, table=0, n_packets=129, n_bytes=11951, priority=0 actions=CONTROLLER:65535
