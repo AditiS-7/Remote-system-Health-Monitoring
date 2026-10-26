@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local Ryu virtualenv (each member installs Ryu locally)
+ryu-env/
+d1_server/ryu-env/

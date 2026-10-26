@@ -1,5 +1,5 @@
 from mininet.net import Mininet
-from mininet.node import RemoteController, OVSSwitch
+from mininet.node import RemoteController, OVSSwitch, Node
 from mininet.cli import CLI
 from mininet.log import setLogLevel
 
@@ -32,6 +32,13 @@ def main():
     ]:
         host = net.addHost(name, ip=ip)
         net.addLink(host, switch)
+
+    # Root-namespace node "ctl": lets the monitoring server (inside Mininet)
+    # reach the Ryu controller's REST endpoint (http://10.0.0.100:8080/alert)
+    # running on the VM. It is not in net.hosts, so pingall does not include it.
+    ctl = Node("ctl", inNamespace=False)
+    ctl_link = net.addLink(ctl, switch)
+    ctl.setIP("10.0.0.100/24", intf=ctl_link.intf1)
 
     try:
         net.start()
