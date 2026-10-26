@@ -1,0 +1,7 @@
+{
+  "controller": {
+    "enabled": true,
+    "url": "http://10.0.0.254:8080/alert",
+    "timeout_sec": 2.0
+  }
+}
