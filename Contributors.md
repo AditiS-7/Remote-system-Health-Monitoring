@@ -5,7 +5,8 @@ Team Members:-
     
 (2) Name : Aditi Srinivasa Murthy
     SRN : PES1UG25CS032
-    Git hub id : Aditis-7
+    email : aditisrini314@gmail.com
+    Git hub id : AditiS-7
     
 (3) Name : Hrushikesh Gudugunti
     SRN : PES1UG26CS819
@@ -13,3 +14,4 @@ Team Members:-
     
 (4) Name : Anand
     SRN : PES1UG25CS060
+    Git hub id : anandtalwart17
