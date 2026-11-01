@@ -1,17 +1,51 @@
-#!/bin/bash
-ovs-vsctl -- set port s1-eth4 qos=@newqos \
-  -- --id=@newqos create qos type=linux-htb other-config:max-rate=10000000 queues:0=@q0 queues:1=@q1 \
-  -- --id=@q0 create queue other-config:min-rate=1000000 other-config:max-rate=10000000 other-config:priority=1 \
-  -- --id=@q1 create queue other-config:min-rate=8000000 other-config:max-rate=10000000 other-config:priority=0
-echo "Queues created on s1-eth4"#!/bin/bash
-# Gives Mininet hosts a path to the Ryu REST API (port 8080) running on the VM.
-# Run AFTER topology.py has started. Safe to re-run.
-ip link show veth-ctl >/dev/null 2>&1 && ip link del veth-ctl
-ovs-vsctl --if-exists del-port s1 veth-sw
+#!/usr/bin/env bash
+set -euo pipefail
 
-ip link add veth-ctl type veth peer name veth-sw
-ovs-vsctl add-port s1 veth-sw
-ip addr add 10.0.0.254/24 dev veth-ctl
-ip link set veth-ctl up
-ip link set veth-sw up
-echo "Controller link ready: VM is reachable at 10.0.0.254"
+PORT="${1:-s1-eth4}"
+RATE="${2:-10000000}"
+
+if [[ "$EUID" -ne 0 ]]; then
+    echo "Run with sudo."
+    exit 1
+fi
+
+if ! [[ "$RATE" =~ ^[0-9]+$ ]]; then
+    echo "Rate must be an integer in bits/sec."
+    exit 1
+fi
+
+if (( RATE < 1000000 )); then
+    echo "Rate must be at least 1000000 bits/sec."
+    exit 1
+fi
+
+ovs-vsctl get Port "$PORT" name >/dev/null
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+bash "$SCRIPT_DIR/cleanup_queues.sh" "$PORT"
+
+NORMAL_MIN=$((RATE / 10))
+CRITICAL_MIN=$((RATE * 8 / 10))
+
+ovs-vsctl \
+    -- set Port "$PORT" qos=@qos \
+    -- --id=@qos create QoS \
+        type=linux-htb \
+        external_ids:cn_d2_port="$PORT" \
+        other-config:max-rate="$RATE" \
+        queues:0=@normal \
+        queues:1=@critical \
+    -- --id=@normal create Queue \
+        external_ids:cn_d2_port="$PORT" \
+        other-config:min-rate="$NORMAL_MIN" \
+        other-config:max-rate="$RATE" \
+        other-config:priority=1 \
+    -- --id=@critical create Queue \
+        external_ids:cn_d2_port="$PORT" \
+        other-config:min-rate="$CRITICAL_MIN" \
+        other-config:max-rate="$RATE" \
+        other-config:priority=0
+
+echo "Configured $PORT: total rate $RATE bits/sec"
+echo "Queue 0: normal traffic, minimum $NORMAL_MIN bits/sec"
+echo "Queue 1: critical traffic, minimum $CRITICAL_MIN bits/sec"

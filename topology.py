@@ -24,20 +24,18 @@ def main():
         failMode="secure"
     )
 
-    for name, ip in [
-        ("agent1", "10.0.0.1/24"),
-        ("agent2", "10.0.0.2/24"),
-        ("agent3", "10.0.0.3/24"),
-        ("server", "10.0.0.4/24"),
+    for name, ip, switch_port in [
+        ("agent1", "10.0.0.1/24", 1),
+        ("agent2", "10.0.0.2/24", 2),
+        ("agent3", "10.0.0.3/24", 3),
+        ("server", "10.0.0.4/24", 4),
     ]:
         host = net.addHost(name, ip=ip)
-        net.addLink(host, switch)
+        net.addLink(host, switch, port2=switch_port)
 
-    # Root-namespace node "ctl": lets the monitoring server (inside Mininet)
-    # reach the Ryu controller's REST endpoint (http://10.0.0.100:8080/alert)
-    # running on the VM. It is not in net.hosts, so pingall does not include it.
+    # Root-namespace interface for reaching Ryu's REST API.
     ctl = Node("ctl", inNamespace=False)
-    ctl_link = net.addLink(ctl, switch)
+    ctl_link = net.addLink(ctl, switch, port2=5)
     ctl.setIP("10.0.0.100/24", intf=ctl_link.intf1)
 
     try:
