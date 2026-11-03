@@ -101,6 +101,9 @@ class Node:
         self.rx_rate = 0.0
         self.reports = 0
         self.last_seq = None
+        self.session_id = None
+        self.restarts = 0
+        self.last_ts = None
         self.lost = 0
         self.last_critical_alert = 0.0
 
@@ -142,6 +145,10 @@ class Monitor:
                 "status": str(pkt.get("status", "normal")).lower(),
                 "procs": pkt.get("procs", pkt.get("process_count")),
                 "seq": pkt.get("seq"),
+                "ts": pkt.get("ts"),
+                "session_id": (str(pkt["session_id"])
+                               if pkt.get("session_id") is not None else None),
+                "report_id": pkt.get("report_id"),
             }
 
             # Handle network fields (net_sent/net_recv or net dict)
@@ -201,6 +208,19 @@ class Monitor:
             if node is None:
                 node = self.nodes[pkt["node_id"]] = Node(pkt["node_id"], addr)
                 self.log.info("new node registered: %s (%s)", node.node_id, addr[0])
+
+            # A new session_id from the same node means the agent restarted:
+            # seq starts over, so it must not be counted as packet loss.
+            sid = pkt.get("session_id")
+            if sid is not None:
+                if node.session_id is not None and sid != node.session_id:
+                    node.restarts += 1
+                    node.last_seq = None
+                    self.log.info("agent %s restarted (session %s -> %s)",
+                                  node.node_id, node.session_id, sid)
+                node.session_id = sid
+            if pkt.get("ts") is not None:
+                node.last_ts = pkt["ts"]
 
             # Packet loss calculation
             seq = pkt.get("seq")
