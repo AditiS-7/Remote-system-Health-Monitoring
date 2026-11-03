@@ -12,6 +12,7 @@ New in D2:
     report_id    "<node_id>-<session_id>-<seq>", unique per report
     --log-file   CSV sender log (one row per report, with send timestamp)
     --duration   stop automatically after N seconds
+    --scenario   scripted run such as normal:10,critical:20,normal:10
 """
 import argparse
 import csv
@@ -33,6 +34,34 @@ def classify(stats, cfg):
     if stats["cpu"] > cfg["cpu_critical"] or stats["mem"] > cfg["mem_critical"]:
         return "critical"
     return "normal"
+
+
+def parse_scenario(text):
+    """'normal:10,critical:20,normal:10' -> [('normal', 10.0), ('critical', 20.0), ('normal', 10.0)]"""
+    phases = []
+    for part in text.split(","):
+        try:
+            state, secs = part.strip().split(":")
+            state = state.strip().lower()
+            secs = float(secs)
+            if state not in ("normal", "critical") or secs <= 0:
+                raise ValueError
+        except ValueError:
+            raise SystemExit(
+                f"Bad --scenario part '{part}'. Use state:seconds, where state is "
+                f"normal or critical, e.g. normal:10,critical:20,normal:10")
+        phases.append((state, secs))
+    return phases
+
+
+def scenario_state(phases, elapsed):
+    """Which state the scenario wants at this time (None once it is over)."""
+    t = 0.0
+    for state, secs in phases:
+        t += secs
+        if elapsed < t:
+            return state
+    return None
 
 
 def open_log(path):
@@ -67,11 +96,18 @@ def main():
                         help="write a CSV sender log to this path")
     parser.add_argument("--duration", type=float, default=None,
                         help="stop automatically after N seconds")
+    parser.add_argument("--scenario", default=None,
+                        help="scripted run, e.g. normal:10,critical:20,normal:10 "
+                             "(stops by itself at the end; overrides --critical-after)")
     parser.add_argument("--critical-after", type=float, default=None,
                         help="demo: start faking critical CPU after N seconds")
     parser.add_argument("--critical-for", type=float, default=10,
                         help="demo: how many seconds the fake critical state lasts")
     args = parser.parse_args()
+
+    scenario = parse_scenario(args.scenario) if args.scenario else None
+    if scenario and args.duration is None:
+        args.duration = sum(secs for _, secs in scenario)
 
     session_id = args.session_id or uuid.uuid4().hex[:8]
     sock = create_socket()
@@ -80,10 +116,10 @@ def main():
     sent_ok = 0
     failed = 0
     critical_sent = 0
-    start = time.time()
 
     psutil.cpu_percent(interval=None)   # warm up
     time.sleep(1)
+    start = time.time()                 # --duration / --scenario timing starts here
 
     print(f"{args.id} started, session={session_id}, server={args.server}, "
           f"interval={args.interval}s. Press Ctrl+C to stop.", flush=True)
@@ -101,9 +137,12 @@ def main():
                 time.sleep(args.interval)
                 continue
 
-            # demo mode: fake a critical CPU for a while
+            # test modes: fake a critical CPU on demand
             elapsed = time.time() - start
-            if (args.critical_after is not None
+            if scenario:
+                if scenario_state(scenario, elapsed) == "critical":
+                    stats["cpu"] = 95.0
+            elif (args.critical_after is not None
                     and args.critical_after <= elapsed < args.critical_after + args.critical_for):
                 stats["cpu"] = 95.0
 
