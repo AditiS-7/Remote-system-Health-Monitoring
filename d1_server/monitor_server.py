@@ -233,6 +233,10 @@ class Monitor:
             if level == CRITICAL and (old != CRITICAL or now - node.last_critical_alert >= cooldown):
                 node.last_critical_alert = now
                 to_fire.append(self.make_alert(node, "CRITICAL", reasons))
+            elif old == CRITICAL and level == WARNING:
+                # no longer critical: tell the controller so it can undo prioritisation
+                to_fire.append(self.make_alert(
+                    node, "RECOVERED", ["no longer critical, now WARNING"] + reasons))
             elif level == WARNING and old in (OK, DOWN):
                 to_fire.append(self.make_alert(node, "WARNING", reasons))
             elif level == OK and old in (CRITICAL, DOWN, WARNING):
