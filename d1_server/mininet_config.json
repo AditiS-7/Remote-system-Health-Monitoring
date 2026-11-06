@@ -1,7 +1,10 @@
 {
   "server": {
     "host": "0.0.0.0",
-    "ports": [5000, 5001]
+    "ports": [
+      5000,
+      5001
+    ]
   },
   "thresholds": {
     "cpu_critical": 85,
@@ -16,6 +19,12 @@
   },
   "controller": {
     "enabled": true,
-    "url": "http://10.0.0.100:8080/alert"
+    "url": "http://10.0.0.100:8080/alert",
+    "retries": 3,
+    "retry_delay_sec": 1.0
+  },
+  "logging": {
+    "report_csv": "/tmp/cn-integration/reports.csv",
+    "event_csv": "/tmp/cn-integration/events.csv"
   }
 }
