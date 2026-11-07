@@ -1,0 +1,6 @@
+sh pkill -f agent.py
+agent1 python3 agent/agent.py --id=agent1 --scenario normal:40 --log-file results/agent_logs/agent1.csv > results/agent_logs/agent1.out 2>&1 &
+agent2 python3 agent/agent.py --id=agent2 --scenario normal:10,critical:20,normal:10 --log-file results/agent_logs/agent2.csv > results/agent_logs/agent2.out 2>&1 &
+agent3 python3 agent/agent.py --id=agent3 --scenario normal:40 --log-file results/agent_logs/agent3.csv > results/agent_logs/agent3.out 2>&1 &
+sh sleep 45
+sh tail -n 1 results/agent_logs/agent1.out results/agent_logs/agent2.out results/agent_logs/agent3.out
