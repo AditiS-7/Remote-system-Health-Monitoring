@@ -1,0 +1,20 @@
+------------------------------------------------------------
+Server listening on UDP port 6000
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  1] local 10.0.0.4 port 6000 connected with 10.0.0.1 port 41981
+[  2] local 10.0.0.4 port 6000 connected with 10.0.0.1 port 36136
+[  3] local 10.0.0.4 port 6000 connected with 10.0.0.1 port 54745
+[ ID] Interval       Transfer     Bandwidth        Jitter   Lost/Total Datagrams
+[  3] 0.0000-50.8577 sec  8.87 MBytes  1.46 Mbits/sec  14.717 ms 2/6643 (0.03%)
+[  3] 0.0000-50.8577 sec  80 datagrams received out-of-order
+[  5] WARNING: ack of last datagram failed.
+[  2] 0.0000-50.9343 sec  8.92 MBytes  1.47 Mbits/sec  14.820 ms 0/6679 (0%)
+[  2] 0.0000-50.9343 sec  99 datagrams received out-of-order
+[  4] WARNING: ack of last datagram failed.
+[  1] 0.0000-51.0036 sec  8.91 MBytes  1.46 Mbits/sec  14.858 ms 0/6669 (0%)
+[  1] 0.0000-51.0036 sec  79 datagrams received out-of-order
+[ ID] Interval       Transfer     Bandwidth
+[SUM] 0.0000-51.0036 sec  26.7 MBytes  4.39 Mbits/sec   1/19991 (0.005%)
+[SUM] 0.0000-51.0036 sec  258 datagrams received out-of-order
+[  3] WARNING: ack of last datagram failed.

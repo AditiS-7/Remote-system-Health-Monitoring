@@ -1,0 +1,29 @@
+------------------------------------------------------------
+Client connecting to 10.0.0.4, UDP port 6000
+Sending 1400 byte datagrams, IPG target: 0.00 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  1] local 10.0.0.1 port 44704 connected with 10.0.0.4 port 6000
+[  3] local 10.0.0.1 port 43459 connected with 10.0.0.4 port 6000
+[  2] local 10.0.0.1 port 35654 connected with 10.0.0.4 port 6000
+[ ID] Interval       Transfer     Bandwidth
+[  1] 0.0000-60.6209 sec  10.5 MBytes  1.46 Mbits/sec
+[  1] Sent 7878 datagrams
+[  3] 0.0000-60.7319 sec  10.4 MBytes  1.43 Mbits/sec
+[  3] Sent 7774 datagrams
+[  2] 0.0000-60.8501 sec  10.4 MBytes  1.43 Mbits/sec
+[  2] Sent 7754 datagrams
+[SUM] 0.0000-60.8501 sec  31.2 MBytes  4.31 Mbits/sec
+[SUM-3] Sent 23406 datagrams
+[  1] Server Report:
+[ ID] Interval       Transfer     Bandwidth        Jitter   Lost/Total Datagrams
+[  1] 0.0000-60.8624 sec  10.5 MBytes  1.45 Mbits/sec   0.000 ms 0/7877 (0%)
+[  1] 0.0000-60.8624 sec  248 datagrams received out-of-order
+[  3] Server Report:
+[ ID] Interval       Transfer     Bandwidth        Jitter   Lost/Total Datagrams
+[  3] 0.0000-60.8664 sec  10.4 MBytes  1.43 Mbits/sec   0.000 ms 0/7773 (0%)
+[  3] 0.0000-60.8664 sec  116 datagrams received out-of-order
+[  2] Server Report:
+[ ID] Interval       Transfer     Bandwidth        Jitter   Lost/Total Datagrams
+[  2] 0.0000-60.9461 sec  10.4 MBytes  1.42 Mbits/sec   0.000 ms 0/7753 (0%)
+[  2] 0.0000-60.9461 sec  109 datagrams received out-of-order

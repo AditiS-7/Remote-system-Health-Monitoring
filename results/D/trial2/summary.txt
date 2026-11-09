@@ -1,0 +1,6 @@
+75 reports found in capture
+node     status     sent  recv  loss%    avg_ms    max_ms
+agent1   normal       25    25    0.0    459.78    773.92
+agent2   critical     13    13    0.0     66.48    438.52
+agent2   normal       12    12    0.0    517.87    884.40
+agent3   normal       25    25    0.0    483.32    864.95
