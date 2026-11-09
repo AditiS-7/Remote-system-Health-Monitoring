@@ -1,0 +1,28 @@
+agent1 started, session=b17567e6, server=10.0.0.4, interval=2s. Press Ctrl+C to stop.
+sent seq=0 status=normal port=5000 cpu=2.1 mem=30.2
+sent seq=1 status=normal port=5000 cpu=2.3 mem=30.2
+sent seq=2 status=normal port=5000 cpu=2.8 mem=30.2
+sent seq=3 status=normal port=5000 cpu=3.2 mem=30.2
+sent seq=4 status=normal port=5000 cpu=2.3 mem=30.2
+sent seq=5 status=normal port=5000 cpu=2.6 mem=30.2
+sent seq=6 status=normal port=5000 cpu=3.2 mem=30.2
+sent seq=7 status=normal port=5000 cpu=2.6 mem=30.3
+sent seq=8 status=normal port=5000 cpu=2.3 mem=30.3
+sent seq=9 status=normal port=5000 cpu=2.0 mem=30.3
+sent seq=10 status=normal port=5000 cpu=3.0 mem=30.3
+sent seq=11 status=normal port=5000 cpu=2.3 mem=30.3
+sent seq=12 status=normal port=5000 cpu=2.4 mem=30.3
+sent seq=13 status=normal port=5000 cpu=2.4 mem=30.3
+sent seq=14 status=normal port=5000 cpu=2.3 mem=30.3
+sent seq=15 status=normal port=5000 cpu=5.9 mem=30.7
+sent seq=16 status=normal port=5000 cpu=23.1 mem=32.5
+sent seq=17 status=normal port=5000 cpu=19.4 mem=33.9
+sent seq=18 status=normal port=5000 cpu=7.4 mem=33.7
+sent seq=19 status=normal port=5000 cpu=2.6 mem=33.6
+sent seq=20 status=normal port=5000 cpu=2.0 mem=33.5
+sent seq=21 status=normal port=5000 cpu=3.9 mem=33.5
+sent seq=22 status=normal port=5000 cpu=2.4 mem=33.4
+sent seq=23 status=normal port=5000 cpu=2.1 mem=33.4
+sent seq=24 status=normal port=5000 cpu=2.4 mem=33.4
+agent1: duration 50.0s reached.
+agent1 session b17567e6 summary: sent_ok=25 failed=0 critical_sent=0

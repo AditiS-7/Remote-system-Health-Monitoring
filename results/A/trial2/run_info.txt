@@ -1,0 +1,8 @@
+condition: A (no congestion)
+trial: 2
+controller_mode: dynamic
+background_load: none
+bottleneck_bit_per_s: 5000000
+scenario_file: agent/scenarios/normal_critical_recovery.mn
+git_commit: 874f658
+finished: 2026-11-09 06:39:34

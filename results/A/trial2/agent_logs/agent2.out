@@ -1,0 +1,23 @@
+agent2 started, session=ab3c4d28, server=10.0.0.4, interval=2s. Press Ctrl+C to stop.
+sent seq=0 status=normal port=5000 cpu=4.8 mem=30.1
+sent seq=1 status=normal port=5000 cpu=5.5 mem=30.1
+sent seq=2 status=normal port=5000 cpu=3.0 mem=30.1
+sent seq=3 status=normal port=5000 cpu=1.8 mem=30.1
+sent seq=4 status=normal port=5000 cpu=1.5 mem=30.1
+sent seq=5 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=6 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=7 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=8 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=9 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=10 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=11 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=12 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=13 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=14 status=critical port=5001 cpu=95.0 mem=30.1
+sent seq=15 status=normal port=5000 cpu=1.2 mem=30.1
+sent seq=16 status=normal port=5000 cpu=1.3 mem=30.1
+sent seq=17 status=normal port=5000 cpu=1.3 mem=30.1
+sent seq=18 status=normal port=5000 cpu=1.7 mem=30.1
+sent seq=19 status=normal port=5000 cpu=1.3 mem=30.1
+agent2: duration 40.0s reached.
+agent2 session ab3c4d28 summary: sent_ok=20 failed=0 critical_sent=10
