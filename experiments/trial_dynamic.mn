@@ -1,0 +1,20 @@
+server pkill -TERM -f '^python3 -u d1_server/monitor_server.py'
+sh pkill -f iperf
+sh pkill -f tcpdump
+sh pkill -f agent.py
+sh rm -f results/agent_logs/*
+sh bash integration/setup_queues.sh s1-eth4 5000000
+server python3 -u d1_server/monitor_server.py -c d1_server/mininet_config.json --no-dashboard > /tmp/cn-integration/server.log 2>&1 &
+server iperf -s -u -p 6000 > /tmp/cn-integration/iperf_server.txt 2>&1 &
+server tcpdump -i server-eth0 -n -tt -l -A -s 0 "udp and (dst port 5000 or dst port 5001)" > /tmp/cn-integration/capture_dynamic.txt 2>/dev/null &
+sh sleep 2
+agent1 iperf -c 10.0.0.4 -u -p 6000 -b 15M -l 1400 -P 3 -t 60 > /tmp/cn-integration/iperf_client.txt 2>&1 &
+sh sleep 5
+agent1 python3 agent/agent.py --id=agent1 --scenario normal:40 --log-file results/agent_logs/agent1.csv > results/agent_logs/agent1.out 2>&1 &
+agent2 python3 agent/agent.py --id=agent2 --scenario normal:10,critical:20,normal:10 --log-file results/agent_logs/agent2.csv > results/agent_logs/agent2.out 2>&1 &
+agent3 python3 agent/agent.py --id=agent3 --scenario normal:40 --log-file results/agent_logs/agent3.csv > results/agent_logs/agent3.out 2>&1 &
+sh sleep 45
+sh pkill -f tcpdump
+sh pkill -f "iperf -c"
+server pkill -TERM -f '^python3 -u d1_server/monitor_server.py'
+sh sleep 2
