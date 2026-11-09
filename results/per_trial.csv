@@ -1,0 +1,13 @@
+condition,description,trial,mode,bottleneck_bps,background_load,critical_sent,critical_received,critical_loss_pct,critical_avg_delay_ms,agent2_normal_avg_delay_ms,priority_flow_seen,max_queue1_packets
+A,No congestion,1,dynamic,5000000,none,10,10,0.0,0.13,3.81,True,9
+A,No congestion,2,dynamic,5000000,none,10,10,0.0,0.26,2.68,True,9
+A,No congestion,3,dynamic,5000000,none,10,10,0.0,0.21,2.61,True,9
+B,Congestion - static forwarding,1,static,5000000,"iperf UDP 15M x3 streams, port 6000",10,10,0.0,456.56,518.79,False,0
+B,Congestion - static forwarding,2,static,5000000,"iperf UDP 15M x3 streams, port 6000",10,10,0.0,496.39,503.17,False,0
+B,Congestion - static forwarding,3,static,5000000,"iperf UDP 15M x3 streams, port 6000",10,10,0.0,491.87,477.3,False,0
+C,Congestion - dynamic priority,1,dynamic,5000000,"iperf UDP 15M x3 streams, port 6000",10,10,0.0,55.01,524.12,True,9
+C,Congestion - dynamic priority,2,dynamic,5000000,"iperf UDP 15M x3 streams, port 6000",10,10,0.0,45.2,498.04,True,9
+C,Congestion - dynamic priority,3,dynamic,5000000,"iperf UDP 15M x3 streams, port 6000",10,10,0.0,45.25,517.71,True,9
+D,Recovery under congestion,1,dynamic,5000000,"iperf UDP 15M x3 streams, port 6000",13,13,0.0,67.35,503.41,True,11
+D,Recovery under congestion,2,dynamic,5000000,"iperf UDP 15M x3 streams, port 6000",13,13,0.0,66.48,517.87,True,11
+D,Recovery under congestion,3,dynamic,5000000,"iperf UDP 15M x3 streams, port 6000",13,13,0.0,60.19,500.58,True,11

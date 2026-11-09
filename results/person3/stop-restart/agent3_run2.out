@@ -1,0 +1,16 @@
+agent3 started, session=81de8ae7, server=10.0.0.4, interval=2s. Press Ctrl+C to stop.
+sent seq=0 status=normal port=5000 cpu=2.5 mem=72.5
+sent seq=1 status=normal port=5000 cpu=2.0 mem=72.3
+sent seq=2 status=normal port=5000 cpu=2.1 mem=72.3
+sent seq=3 status=normal port=5000 cpu=1.6 mem=72.3
+sent seq=4 status=normal port=5000 cpu=1.8 mem=72.3
+sent seq=5 status=normal port=5000 cpu=1.2 mem=72.3
+sent seq=6 status=normal port=5000 cpu=3.3 mem=72.3
+sent seq=7 status=normal port=5000 cpu=2.7 mem=72.3
+sent seq=8 status=normal port=5000 cpu=1.9 mem=72.3
+sent seq=9 status=normal port=5000 cpu=2.3 mem=72.3
+sent seq=10 status=normal port=5000 cpu=3.0 mem=72.3
+sent seq=11 status=normal port=5000 cpu=2.3 mem=72.3
+sent seq=12 status=normal port=5000 cpu=1.5 mem=72.3
+agent3: duration 25.0s reached.
+agent3 session 81de8ae7 summary: sent_ok=13 failed=0 critical_sent=0

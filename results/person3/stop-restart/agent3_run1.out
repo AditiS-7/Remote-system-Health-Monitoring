@@ -1,0 +1,8 @@
+agent3 started, session=f36650e3, server=10.0.0.4, interval=2s. Press Ctrl+C to stop.
+sent seq=0 status=normal port=5000 cpu=4.6 mem=71.5
+sent seq=1 status=normal port=5000 cpu=5.5 mem=71.5
+sent seq=2 status=normal port=5000 cpu=6.3 mem=71.5
+sent seq=3 status=normal port=5000 cpu=4.7 mem=71.5
+sent seq=4 status=normal port=5000 cpu=3.9 mem=71.5
+sent seq=5 status=normal port=5000 cpu=4.6 mem=71.5
+sent seq=6 status=normal port=5000 cpu=4.7 mem=71.5
