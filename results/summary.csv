@@ -1,0 +1,5 @@
+condition,description,trials,critical_mean_ms,critical_sample_sd_ms,agent2_normal_mean_ms,agent2_normal_sample_sd_ms,critical_loss_pct
+A,No congestion,3,0.2,0.07,3.03,0.67,0.0
+B,Congestion - static forwarding,3,481.61,21.81,499.75,20.95,0.0
+C,Congestion - dynamic priority,3,48.49,5.65,513.29,13.59,0.0
+D,Recovery under congestion,3,64.67,3.91,507.29,9.27,0.0

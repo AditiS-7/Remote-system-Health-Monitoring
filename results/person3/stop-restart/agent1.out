@@ -1,0 +1,33 @@
+agent1 started, session=9e1b102d, server=10.0.0.4, interval=2s. Press Ctrl+C to stop.
+sent seq=0 status=normal port=5000 cpu=5.3 mem=71.5
+sent seq=1 status=normal port=5000 cpu=5.5 mem=71.5
+sent seq=2 status=normal port=5000 cpu=6.2 mem=71.5
+sent seq=3 status=normal port=5000 cpu=4.9 mem=71.5
+sent seq=4 status=normal port=5000 cpu=3.9 mem=71.5
+sent seq=5 status=normal port=5000 cpu=4.3 mem=71.5
+sent seq=6 status=normal port=5000 cpu=4.7 mem=71.5
+sent seq=7 status=normal port=5000 cpu=9.5 mem=71.5
+sent seq=8 status=normal port=5000 cpu=8.6 mem=71.6
+sent seq=9 status=normal port=5000 cpu=3.6 mem=71.9
+sent seq=10 status=normal port=5000 cpu=2.8 mem=71.9
+sent seq=11 status=normal port=5000 cpu=2.0 mem=71.9
+sent seq=12 status=normal port=5000 cpu=1.9 mem=71.9
+sent seq=13 status=normal port=5000 cpu=4.0 mem=71.9
+sent seq=14 status=normal port=5000 cpu=8.9 mem=72.5
+sent seq=15 status=normal port=5000 cpu=5.3 mem=72.5
+sent seq=16 status=normal port=5000 cpu=1.7 mem=72.3
+sent seq=17 status=normal port=5000 cpu=2.4 mem=72.3
+sent seq=18 status=normal port=5000 cpu=1.2 mem=72.3
+sent seq=19 status=normal port=5000 cpu=1.9 mem=72.3
+sent seq=20 status=normal port=5000 cpu=2.3 mem=72.3
+sent seq=21 status=normal port=5000 cpu=2.6 mem=72.3
+sent seq=22 status=normal port=5000 cpu=2.3 mem=72.3
+sent seq=23 status=normal port=5000 cpu=2.4 mem=72.3
+sent seq=24 status=normal port=5000 cpu=2.2 mem=72.3
+sent seq=25 status=normal port=5000 cpu=2.9 mem=72.3
+sent seq=26 status=normal port=5000 cpu=1.2 mem=72.3
+sent seq=27 status=normal port=5000 cpu=2.4 mem=72.3
+sent seq=28 status=normal port=5000 cpu=4.0 mem=72.0
+sent seq=29 status=normal port=5000 cpu=4.5 mem=71.8
+agent1: duration 60.0s reached.
+agent1 session 9e1b102d summary: sent_ok=30 failed=0 critical_sent=0
