@@ -185,7 +185,8 @@ Remote-system-Health-Monitoring/
    │   └── capture_evidence.py
    │├── experiments/
 │   ├── run_experiments.py
-│   └── parse_capture.py
+│   ├── parse_capture.py
+│   └── analyze_results.py
 │
    ├── docs/
    │   ├── person4/               (controller integration notes)
@@ -198,6 +199,7 @@ Remote-system-Health-Monitoring/
    │   ├── A/  B/  C/  D/         (experiment trials)
    │   ├── per_trial.csv
    │   ├── summary.csv
+   │   ├── analysis/              (generated tables and charts)
    │   └── performance.svg
    │
 ├── topology.py
