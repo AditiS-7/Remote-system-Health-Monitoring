@@ -7,7 +7,7 @@ node, raises alerts, tells the SDN controller about critical nodes, and writes C
 
 Standalone (any machine):
 ```bash
-python3 d1_server/monitor_server.py -c d1_server/config.json
+python3 d1_server/monitor_server.py -c config.json
 ```
 Inside Mininet (host `server`, controller enabled):
 ```bash
