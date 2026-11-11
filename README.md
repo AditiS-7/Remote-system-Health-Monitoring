@@ -170,24 +170,36 @@ Remote-system-Health-Monitoring/
 │       └── recovery_under_load.mn
 │
 ├── d1_server/
-│   ├── monitor_server.py
-│   └── mininet_config.json
-│
-├── integration/
-│   ├── health_controller.py
-│   ├── setup_queues.sh
-│   └── capture_evidence.py
-│
-├── experiments/
+   │   ├── monitor_server.py
+   │   ├── mininet_config.json
+   │   ├── fake_agent.py          (test helper: simulates agents for server testing)
+   │   ├── tests/
+   │   │   └── test_server.py     (22 unit tests)
+   │   └── docs/
+   │       └── server_notes.md
+   │
+   ├── integration/
+   │   ├── health_controller.py
+   │   ├── setup_queues.sh
+   │   ├── cleanup_queues.sh
+   │   └── capture_evidence.py
+   │├── experiments/
 │   ├── run_experiments.py
 │   └── parse_capture.py
 │
-├── results/
-│   ├── A/
-│   ├── B/
-│   ├── C/
-│   └── D/
-│
+   ├── docs/
+   │   ├── person4/               (controller integration notes)
+   │   ├── screenshots/
+   │   └── evidence/
+   │       ├── network/           (flow and controller captures)
+   │       └── scenario-runs/     (agent logs and switch captures per scenario)
+   │
+   ├── results/
+   │   ├── A/  B/  C/  D/         (experiment trials)
+   │   ├── per_trial.csv
+   │   ├── summary.csv
+   │   └── performance.svg
+   │
 ├── topology.py
 ├── config.json
 └── README.md
@@ -532,7 +544,6 @@ Each trial folder contains files such as:
 - `evidence.jsonl` – controller, flow and queue snapshots.
 - `run_info.txt` – experimental configuration.
 - `status_end.json` – controller status at the end of the trial.
-- `ryu.log` and `mininet.log` – controller and topology output.
 
 ### Performance Results
 

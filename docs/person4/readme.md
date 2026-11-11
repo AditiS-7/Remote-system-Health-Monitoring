@@ -10,8 +10,6 @@ high-priority queue, and moved back when it recovers.
 |---|---|
 | `integration/health_controller.py` | Ryu app: learning switch + alert REST API + dynamic flow rules |
 | `integration/setup_queues.sh` | Creates the normal and high-priority queues on `s1-eth4` |
-| `integration/setup_controller_link.sh` | Gives the Mininet hosts a path to the Ryu REST API at `10.0.0.254` |
-| `integration/server_config.json` | Enables controller notification in the monitoring server |
 
 ## 1. Critical-event communication
 
@@ -21,7 +19,7 @@ crosses a threshold (CPU > 85% or memory > 90%) and when it recovers. For
 controller:
 
 ```
-POST http://10.0.0.254:8080/alert
+POST http://10.0.0.100:8080/alert
 Content-Type: application/json
 ```
 
@@ -34,10 +32,9 @@ Main fields of the JSON body:
 | `src_ip` | IP address of the node, e.g. `10.0.0.2` |
 | `reasons` | List of strings, e.g. `["CPU 95.0% > 85.0%"]` |
 
-`10.0.0.254` is the VM side of a virtual link created by
-`setup_controller_link.sh`. Hosts inside Mininet cannot use `127.0.0.1` to reach
-Ryu, because each host has its own network namespace.
-
+`10.0.0.100` is the `ctl` node, which `topology.py` creates to link the
+Mininet hosts to the Ryu REST API. Hosts inside Mininet cannot use `127.0.0.1`
+to reach Ryu, because each host has its own network namespace.
 ## 2. Controller interface
 
 `health_controller.py` is one Ryu app (OpenFlow 1.3) with two jobs:
@@ -99,9 +96,8 @@ Use four terminals from the repo root.
    ```
    pingall
    sh bash integration/setup_queues.sh
-   sh bash integration/setup_controller_link.sh
-   server ping -c1 10.0.0.254
-   server python3 d1_server/monitor_server.py -c integration/server_config.json > /tmp/server.log 2>&1 &
+   server ping -c1 10.0.0.100
+   server python3 d1_server/monitor_server.py -c d1_server/mininet_config.json > /tmp/server.log 2>&1 &
    agent1 python3 agent/agent.py --id agent1 --server 10.0.0.4 > /tmp/a1.log 2>&1 &
    ```
 3. **Terminal 3, status check (plain shell):**
@@ -141,5 +137,4 @@ Screenshots are in `docs/person4/screenshots/`:
 
 - The controller was tested with one switch (`s1`) and the server on port 4.
   `SERVER_PORT_NO` in `health_controller.py` must match the switch port that faces the server.
-- If `topology.py` later adds a NAT node, `setup_controller_link.sh` can be dropped
-  and the URL in `server_config.json` pointed at the NAT address.
+
