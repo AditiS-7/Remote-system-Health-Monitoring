@@ -13,6 +13,7 @@ Usage:
     python3 monitor_server.py --no-dashboard     # log-only mode (useful in tests)
 """
 import argparse
+import csv
 import json
 import logging
 import os
@@ -55,7 +56,14 @@ DEFAULT_CONFIG = {
     "controller": {
         "enabled": False,
         "url": "http://127.0.0.1:8080/alert",
-        "timeout_sec": 2.0
+        "timeout_sec": 2.0,
+        "retries": 3,
+        "retry_delay_sec": 1.0
+    },
+    "logging": {
+        "report_csv": "reports.csv",
+        "event_csv": "events.csv",
+        "dedup_window": 1024
     }
 }
 
@@ -84,6 +92,46 @@ def load_config(path):
     return cfg
 
 
+class CsvLog:
+    """Thread-safe append-only CSV writer (flushes every row, header written once)."""
+
+    def __init__(self, path, fields):
+        self.path, self.fields = path, fields
+        self.lock = threading.Lock()
+        self.fh = None
+        if not path:
+            return
+        d = os.path.dirname(path)
+        if d:
+            os.makedirs(d, exist_ok=True)
+        new = not os.path.exists(path) or os.path.getsize(path) == 0
+        self.fh = open(path, "a", newline="")
+        self.writer = csv.DictWriter(self.fh, fieldnames=fields, extrasaction="ignore")
+        if new:
+            self.writer.writeheader()
+            self.fh.flush()
+
+    def write(self, **row):
+        with self.lock:
+            if self.fh is None:
+                return
+            self.writer.writerow(row)
+            self.fh.flush()
+
+    def close(self):
+        if self.fh is not None:
+            with self.lock:
+                self.fh.close()
+                self.fh = None
+
+
+REPORT_FIELDS = ["recv_ts", "send_ts", "delay_ms", "node_id", "src_ip", "port",
+                 "session_id", "seq", "report_id", "cpu", "mem", "agent_status",
+                 "node_status", "flag"]
+EVENT_FIELDS = ["epoch", "time", "event", "node_id", "src_ip", "level",
+                "detail", "attempts", "latency_ms"]
+
+
 class Node:
     def __init__(self, node_id, addr):
         self.node_id = node_id
@@ -105,6 +153,10 @@ class Node:
         self.restarts = 0
         self.last_ts = None
         self.lost = 0
+        self.duplicates = 0
+        self.out_of_order = 0
+        self.seen = set()          # report keys of the current session (dedup)
+        self.seen_order = deque()
         self.last_critical_alert = 0.0
 
 
@@ -117,8 +169,41 @@ class Monitor:
         self.stats = {"received": 0, "malformed": 0}
         self.stop_event = threading.Event()
         self.pool = ThreadPoolExecutor(max_workers=cfg["server"]["workers"])
+        self.alert_pool = ThreadPoolExecutor(max_workers=4)   # controller POSTs + retries
+        lg = cfg["logging"]
+        self.report_csv = CsvLog(lg.get("report_csv"), REPORT_FIELDS)
+        self.event_csv = CsvLog(lg.get("event_csv"), EVENT_FIELDS)
         self.sockets = []
         self.log = logging.getLogger("monitor")
+
+    @staticmethod
+    def _num(v):
+        try:
+            return float(v) if v is not None else None
+        except (TypeError, ValueError):
+            return None
+
+    def event(self, event, node_id="", src_ip="", level="", detail="",
+              attempts="", latency_ms=""):
+        now = time.time()
+        self.event_csv.write(epoch=f"{now:.6f}",
+                             time=datetime.fromtimestamp(now).isoformat(timespec="milliseconds"),
+                             event=event, node_id=node_id, src_ip=src_ip, level=level,
+                             detail=detail, attempts=attempts, latency_ms=latency_ms)
+
+    def log_report(self, recv_ts, port, addr, pkt, node_status, flag):
+        pkt = pkt or {}
+        ts = pkt.get("ts")
+        self.report_csv.write(
+            recv_ts=f"{recv_ts:.6f}",
+            send_ts="" if ts is None else f"{ts:.6f}",
+            delay_ms="" if ts is None else f"{(recv_ts - ts) * 1000:.3f}",
+            node_id=pkt.get("node_id", ""), src_ip=addr[0], port=port or "",
+            session_id=pkt.get("session_id") or "",
+            seq="" if pkt.get("seq") is None else pkt.get("seq"),
+            report_id=pkt.get("report_id") or "",
+            cpu=pkt.get("cpu", ""), mem=pkt.get("mem", ""),
+            agent_status=pkt.get("status", ""), node_status=node_status, flag=flag)
 
     def parse(self, data):
         """Decode datagram and adapt agent JSON schema."""
@@ -145,7 +230,7 @@ class Monitor:
                 "status": str(pkt.get("status", "normal")).lower(),
                 "procs": pkt.get("procs", pkt.get("process_count")),
                 "seq": pkt.get("seq"),
-                "ts": pkt.get("ts"),
+                "ts": self._num(pkt.get("ts")),
                 "session_id": (str(pkt["session_id"])
                                if pkt.get("session_id") is not None else None),
                 "report_id": pkt.get("report_id"),
@@ -192,16 +277,20 @@ class Monitor:
 
         return level, reasons
 
-    def handle_datagram(self, data, addr):
+    def handle_datagram(self, data, addr, recv_ts=None, port=None):
+        recv_ts = recv_ts if recv_ts is not None else time.time()
         pkt = self.parse(data)
         if pkt is None:
             with self.lock:
                 self.stats["malformed"] += 1
             self.log.warning("malformed packet from %s:%s dropped", *addr)
+            self.log_report(recv_ts, port, addr, None, "", "malformed")
+            self.event("MALFORMED", src_ip=addr[0], detail=f"{len(data)} bytes")
             return
 
-        now = time.time()
+        now = recv_ts
         to_fire = []
+        flag = "ok"
         with self.lock:
             self.stats["received"] += 1
             node = self.nodes.get(pkt["node_id"])
@@ -216,14 +305,50 @@ class Monitor:
                 if node.session_id is not None and sid != node.session_id:
                     node.restarts += 1
                     node.last_seq = None
+                    node.seen.clear()
+                    node.seen_order.clear()
+                    flag = "restart"
                     self.log.info("agent %s restarted (session %s -> %s)",
                                   node.node_id, node.session_id, sid)
+                    self.event("AGENT_RESTART", node.node_id, addr[0],
+                               detail=f"session {node.session_id} -> {sid}")
                 node.session_id = sid
+
+            # Duplicate / out-of-order detection
+            seq = pkt.get("seq")
+            key = pkt.get("report_id") or (seq if isinstance(seq, int) else None)
+            stale = None            # "duplicate" or "out_of_order": do not touch node state
+            if sid is not None and key is not None:
+                if key in node.seen:
+                    stale = "duplicate"
+                elif isinstance(seq, int) and node.last_seq is not None and seq < node.last_seq:
+                    stale = "out_of_order"
+                    if node.lost > 0:
+                        node.lost -= 1      # a gap we counted as lost has now arrived
+                window = self.cfg["logging"]["dedup_window"]
+                if key not in node.seen:
+                    node.seen.add(key)
+                    node.seen_order.append(key)
+                    while len(node.seen_order) > window:
+                        node.seen.discard(node.seen_order.popleft())
+            elif sid is None and isinstance(seq, int) and seq == node.last_seq:
+                stale = "duplicate"     # old agents without session_id: only exact repeats
+
+            if stale:
+                if stale == "duplicate":
+                    node.duplicates += 1
+                else:
+                    node.out_of_order += 1
+                self.stats[stale] = self.stats.get(stale, 0) + 1
+                node_status = node.status
+                self.log.info("%s report from %s (seq %s) ignored", stale, node.node_id, seq)
+                self.log_report(recv_ts, port, addr, pkt, node_status, stale)
+                return
+
             if pkt.get("ts") is not None:
                 node.last_ts = pkt["ts"]
 
             # Packet loss calculation
-            seq = pkt.get("seq")
             if isinstance(seq, int):
                 if node.last_seq is not None and seq > node.last_seq + 1:
                     node.lost += seq - node.last_seq - 1
@@ -248,6 +373,10 @@ class Monitor:
             old = node.status
             level, reasons = self.classify(node.cpu, node.mem, node.agent_type)
             node.status = level
+            if old == DOWN:
+                flag = "rejoin" if flag == "ok" else flag
+                self.event("NODE_REJOIN", node.node_id, addr[0], detail=f"now {level}")
+            self.log_report(recv_ts, port, addr, pkt, level, flag)
 
             cooldown = self.cfg["alerts"]["cooldown_sec"]
             if level == CRITICAL and (old != CRITICAL or now - node.last_critical_alert >= cooldown):
@@ -272,6 +401,7 @@ class Monitor:
             "node_id": node.node_id,
             "src_ip": node.addr[0],
             "level": level,
+            "epoch": time.time(),
             "reasons": reasons,
             "cpu_percent": node.cpu,
             "memory_percent": node.mem,
@@ -282,21 +412,55 @@ class Monitor:
         self.log.warning(msg) if alert["level"] != "RECOVERED" else self.log.info(msg)
         with self.lock:
             self.alerts.append(alert)
+        self.event("ALERT", alert["node_id"], alert["src_ip"], alert["level"],
+                   "; ".join(alert["reasons"]))
         if alert["level"] in ("CRITICAL", "RECOVERED"):
-            self.pool.submit(self.notify_controller, alert)
+            self.alert_pool.submit(self.notify_controller, alert)
+
+    def alert_is_stale(self, alert):
+        """True if the node's state has moved on, so re-sending this alert would mislead."""
+        with self.lock:
+            node = self.nodes.get(alert["node_id"])
+            if node is None:
+                return False
+            if alert["level"] == "CRITICAL":
+                return node.status != CRITICAL
+            return node.status == CRITICAL      # RECOVERED but critical again
 
     def notify_controller(self, alert):
         c = self.cfg["controller"]
         if not c["enabled"]:
             return
-        try:
-            req = urlrequest.Request(
-                c["url"], data=json.dumps(alert).encode(),
-                headers={"Content-Type": "application/json"}, method="POST")
-            urlrequest.urlopen(req, timeout=c["timeout_sec"]).close()
-            self.log.info("alert for %s forwarded to controller", alert["node_id"])
-        except Exception as e:
-            self.log.error("controller notify failed: %s", e)
+        attempts_max = max(1, int(c.get("retries", 3)))
+        delay = float(c.get("retry_delay_sec", 1.0))
+        t0 = time.time()
+        for attempt in range(1, attempts_max + 1):
+            try:
+                req = urlrequest.Request(
+                    c["url"], data=json.dumps(alert).encode(),
+                    headers={"Content-Type": "application/json"}, method="POST")
+                urlrequest.urlopen(req, timeout=c["timeout_sec"]).close()
+                ms = (time.time() - t0) * 1000
+                self.log.info("alert %s for %s forwarded to controller (attempt %d)",
+                              alert["level"], alert["node_id"], attempt)
+                self.event("CONTROLLER_OK", alert["node_id"], alert["src_ip"],
+                           alert["level"], attempts=attempt, latency_ms=f"{ms:.1f}")
+                return
+            except Exception as e:
+                self.log.error("controller notify failed (%s %s, attempt %d/%d): %s",
+                               alert["level"], alert["node_id"], attempt, attempts_max, e)
+                if attempt == attempts_max:
+                    break
+                time.sleep(delay)
+                if self.alert_is_stale(alert):
+                    self.log.info("dropping stale %s alert for %s", alert["level"],
+                                  alert["node_id"])
+                    self.event("CONTROLLER_SKIPPED_STALE", alert["node_id"],
+                               alert["src_ip"], alert["level"], attempts=attempt)
+                    return
+        self.event("CONTROLLER_FAILED", alert["node_id"], alert["src_ip"],
+                   alert["level"], detail="gave up", attempts=attempts_max,
+                   latency_ms=f"{(time.time() - t0) * 1000:.1f}")
 
     def heartbeat_loop(self):
         """Mark DOWN if no report received within timeout (6.0s)."""
@@ -329,14 +493,15 @@ class Monitor:
         lines = [
             f"{BOLD}D1 CENTRAL MONITORING SERVER{RESET}   "
             f"udp/[{ports_str}]   {datetime.now():%Y-%m-%d %H:%M:%S}",
-            f"packets: {self.stats['received']} ok, {self.stats['malformed']} malformed"
+            f"packets: {self.stats['received']} ok, {self.stats['malformed']} malformed, "
+            f"{self.stats.get('duplicate', 0)} dup, {self.stats.get('out_of_order', 0)} ooo"
             f"   thresholds: CPU {self.cfg['thresholds']['cpu_warning']}/"
             f"{self.cfg['thresholds']['cpu_critical']}%  MEM "
             f"{self.cfg['thresholds']['memory_warning']}/"
             f"{self.cfg['thresholds']['memory_critical']}%",
             "",
             f"{BOLD}{'NODE':<10}{'IP':<15}{'STATUS':<10}{'CPU%':>6}{'MEM%':>7}"
-            f"{'PROCS':>7}{'TX':>13}{'RX':>13}{'RPTS':>6}{'LOST':>6}{'AGE':>6}{RESET}",
+            f"{'PROCS':>7}{'TX':>13}{'RX':>13}{'RPTS':>6}{'LOST':>6}{'DUP':>5}{'OOO':>5}{'AGE':>6}{RESET}",
         ]
         for nid in sorted(self.nodes):
             n = self.nodes[nid]
@@ -346,7 +511,7 @@ class Monitor:
                 f"{n.node_id:<10}{n.addr[0]:<15}{col}{n.status:<10}{RESET}"
                 f"{n.cpu:>6.1f}{n.mem:>7.1f}{str(n.procs if n.procs is not None else '-'):>7}"
                 f"{self.fmt_rate(n.tx_rate):>13}{self.fmt_rate(n.rx_rate):>13}"
-                f"{n.reports:>6}{n.lost:>6}{age:>5.0f}s")
+                f"{n.reports:>6}{n.lost:>6}{n.duplicates:>5}{n.out_of_order:>5}{age:>5.0f}s")
         if not self.nodes:
             lines.append("  (waiting for agents...)")
         lines += ["", f"{BOLD}RECENT ALERTS{RESET}"]
@@ -371,7 +536,8 @@ class Monitor:
                 continue
             except OSError:
                 break
-            self.pool.submit(self.handle_datagram, data, addr)
+            self.pool.submit(self.handle_datagram, data, addr, time.time(),
+                             sock.getsockname()[1])
 
     def serve(self):
         srv = self.cfg["server"]
@@ -403,6 +569,9 @@ class Monitor:
             except Exception:
                 pass
         self.pool.shutdown(wait=False)
+        self.alert_pool.shutdown(wait=False)
+        self.report_csv.close()
+        self.event_csv.close()
 
 
 def main():
