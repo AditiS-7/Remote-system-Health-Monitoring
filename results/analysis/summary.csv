@@ -1,0 +1,5 @@
+condition,description,trials,crit_avg_ms_mean,crit_avg_ms_sd,normal_agent2_avg_ms_mean,normal_agent2_avg_ms_sd,normal_all_avg_ms_mean,normal_all_avg_ms_sd,crit_loss_pct_mean,crit_loss_pct_sd,normal_all_loss_pct_mean,normal_all_loss_pct_sd,rule_install_s_mean,rule_install_s_sd,rule_removed_after_recovery_s_mean,rule_removed_after_recovery_s_sd,crit_sent_total,crit_recv_total,max_queue1_packets
+A,No congestion,3,0.2,0.07,3.03,0.67,1.83,0.29,0.0,0.0,0.0,0.0,0.05,0.01,0.43,0.35,30,30,9
+B,"Congestion, static",3,481.61,21.81,499.75,20.95,483.95,8.52,0.0,0.0,0.0,0.0,,,,,30,30,0
+C,"Congestion, dynamic",3,48.49,5.65,513.29,13.59,487.24,13.86,0.0,0.0,0.0,0.0,1.46,0.16,1.0,0.01,30,30,9
+D,Recovery under congestion,3,64.67,3.91,507.29,9.27,490.67,26.34,0.0,0.0,0.0,0.0,1.46,0.11,1.18,0.21,39,39,11
