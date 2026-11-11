@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="480" viewBox="0 0 900 480" font-family="sans-serif">
+<rect width="100%" height="100%" fill="white"/>
+<text x="450.0" y="28" text-anchor="middle" font-size="18">Critical vs normal report delay (agent2)</text>
+<text x="22" y="232.5" text-anchor="middle" font-size="13" transform="rotate(-90 22 232.5)">delay (ms)</text>
+<line x1="90" y1="410.0" x2="870" y2="410.0" stroke="#ddd"/><text x="82" y="414.0" text-anchor="end" font-size="12">0</text>
+<line x1="90" y1="350.8" x2="870" y2="350.8" stroke="#ddd"/><text x="82" y="354.8" text-anchor="end" font-size="12">100</text>
+<line x1="90" y1="291.7" x2="870" y2="291.7" stroke="#ddd"/><text x="82" y="295.7" text-anchor="end" font-size="12">200</text>
+<line x1="90" y1="232.5" x2="870" y2="232.5" stroke="#ddd"/><text x="82" y="236.5" text-anchor="end" font-size="12">300</text>
+<line x1="90" y1="173.3" x2="870" y2="173.3" stroke="#ddd"/><text x="82" y="177.3" text-anchor="end" font-size="12">400</text>
+<line x1="90" y1="114.2" x2="870" y2="114.2" stroke="#ddd"/><text x="82" y="118.2" text-anchor="end" font-size="12">500</text>
+<line x1="90" y1="55.0" x2="870" y2="55.0" stroke="#ddd"/><text x="82" y="59.0" text-anchor="end" font-size="12">600</text>
+<text x="187.5" y="432" text-anchor="middle" font-size="13">A: No congestion</text>
+<rect x="119.2" y="409.9" width="61.4" height="0.5" fill="#527da8"/>
+<line x1="150.0" y1="409.9" x2="150.0" y2="409.8" stroke="#222" stroke-width="2"/><line x1="144.0" y1="409.8" x2="156.0" y2="409.8" stroke="#222"/><line x1="144.0" y1="409.9" x2="156.0" y2="409.9" stroke="#222"/>
+<text x="150.0" y="401.8" text-anchor="middle" font-size="12">0.2</text>
+<rect x="187.5" y="408.2" width="61.4" height="1.8" fill="#c0504d"/>
+<line x1="218.2" y1="408.6" x2="218.2" y2="407.8" stroke="#222" stroke-width="2"/><line x1="212.2" y1="407.8" x2="224.2" y2="407.8" stroke="#222"/><line x1="212.2" y1="408.6" x2="224.2" y2="408.6" stroke="#222"/>
+<text x="218.2" y="399.8" text-anchor="middle" font-size="12">3.0</text>
+<text x="382.5" y="432" text-anchor="middle" font-size="13">B: Congestion, static</text>
+<rect x="314.2" y="125.0" width="61.4" height="285.0" fill="#527da8"/>
+<line x1="345.0" y1="138.0" x2="345.0" y2="112.1" stroke="#222" stroke-width="2"/><line x1="339.0" y1="112.1" x2="351.0" y2="112.1" stroke="#222"/><line x1="339.0" y1="138.0" x2="351.0" y2="138.0" stroke="#222"/>
+<text x="345.0" y="104.1" text-anchor="middle" font-size="12">481.6</text>
+<rect x="382.5" y="114.3" width="61.4" height="295.7" fill="#c0504d"/>
+<line x1="413.2" y1="126.7" x2="413.2" y2="101.9" stroke="#222" stroke-width="2"/><line x1="407.2" y1="101.9" x2="419.2" y2="101.9" stroke="#222"/><line x1="407.2" y1="126.7" x2="419.2" y2="126.7" stroke="#222"/>
+<text x="413.2" y="93.9" text-anchor="middle" font-size="12">499.8</text>
+<text x="577.5" y="432" text-anchor="middle" font-size="13">C: Congestion, dynamic</text>
+<rect x="509.2" y="381.3" width="61.4" height="28.7" fill="#527da8"/>
+<line x1="540.0" y1="384.7" x2="540.0" y2="378.0" stroke="#222" stroke-width="2"/><line x1="534.0" y1="378.0" x2="546.0" y2="378.0" stroke="#222"/><line x1="534.0" y1="384.7" x2="546.0" y2="384.7" stroke="#222"/>
+<text x="540.0" y="370.0" text-anchor="middle" font-size="12">48.5</text>
+<rect x="577.5" y="106.3" width="61.4" height="303.7" fill="#c0504d"/>
+<line x1="608.2" y1="114.3" x2="608.2" y2="98.3" stroke="#222" stroke-width="2"/><line x1="602.2" y1="98.3" x2="614.2" y2="98.3" stroke="#222"/><line x1="602.2" y1="114.3" x2="614.2" y2="114.3" stroke="#222"/>
+<text x="608.2" y="90.3" text-anchor="middle" font-size="12">513.3</text>
+<text x="772.5" y="432" text-anchor="middle" font-size="13">D: Recovery under congestion</text>
+<rect x="704.2" y="371.7" width="61.4" height="38.3" fill="#527da8"/>
+<line x1="735.0" y1="374.1" x2="735.0" y2="369.4" stroke="#222" stroke-width="2"/><line x1="729.0" y1="369.4" x2="741.0" y2="369.4" stroke="#222"/><line x1="729.0" y1="374.1" x2="741.0" y2="374.1" stroke="#222"/>
+<text x="735.0" y="361.4" text-anchor="middle" font-size="12">64.7</text>
+<rect x="772.5" y="109.9" width="61.4" height="300.1" fill="#c0504d"/>
+<line x1="803.2" y1="115.3" x2="803.2" y2="104.4" stroke="#222" stroke-width="2"/><line x1="797.2" y1="104.4" x2="809.2" y2="104.4" stroke="#222"/><line x1="797.2" y1="115.3" x2="809.2" y2="115.3" stroke="#222"/>
+<text x="803.2" y="96.4" text-anchor="middle" font-size="12">507.3</text>
+<rect x="90" y="456" width="12" height="12" fill="#527da8"/><text x="108" y="466" font-size="12">critical reports</text>
+<rect x="260" y="456" width="12" height="12" fill="#c0504d"/><text x="278" y="466" font-size="12">normal reports</text>
+</svg>
